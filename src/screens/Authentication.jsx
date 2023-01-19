@@ -1,19 +1,54 @@
 import * as React from 'react';
-import {View, SafeAreaView, StyleSheet, TextInput,  Pressable, Alert, Text } from 'react-native';
+import { View, SafeAreaView, StyleSheet, TextInput,  Pressable, Alert, Text } from 'react-native';
+import axios from "axios";
 
 const Authentication = () => {
-  const [phone, onChangeText] = React.useState('phone');
+  const [phone, onChangeText] = React.useState('+7');
+  const enterNumber = num => {
+    if(phone.length < 2) {
+      onChangeText('+7');
+    } else {
+      onChangeText(num);
+    }
+  }
+  const send = () => {
+    //https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs
+    axios.get('https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs', {
+        params: {}
+    })
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.log(error);
+    })
+    .then(function () {
+        // always executed
+    });
+    // axios.post('http://localhost:3000/api/authenticationr', {
+    //   type: 'authentication', phone
+    // })
+    // .then(function (response) {
+    //   console.log(response);
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    // });
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>
       <TextInput
         style={styles.input}
-        onChangeText={onChangeText}
+        onChangeText={enterNumber}
         value={phone}
+        keyboardType='number-pad'
+        textAlign={'center'}
       />
-      <Pressable style={styles.button} onPress={() => Alert.alert(phone)}>
-      <Text style={styles.text}>{"title"}</Text>
-    </Pressable>
+      <Pressable style={styles.button} onPress={send}>
+        <Text style={styles.text}>{'SEND'}</Text>
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -25,17 +60,21 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   input: {
-    width: 250,
+    fontSize: 16,
+    fontWeight: 'bold',
+    width: 270,
     height: 40,
     margin: 12,
     borderWidth: 1,
     padding: 10,
   },
   button: {
+    width: 270,
+    margin: 12,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 32,
+    paddingHorizontal: 2,
     borderRadius: 4,
     elevation: 3,
     backgroundColor: 'black',
