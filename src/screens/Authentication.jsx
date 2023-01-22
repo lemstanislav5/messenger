@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { View, SafeAreaView, StyleSheet, TextInput,  Pressable, Alert, Text } from 'react-native';
-import axios from "axios";
+import { ActivityIndicator, View, SafeAreaView, StyleSheet, TextInput,  Pressable, Alert, Text } from 'react-native';
+import { authThunk } from '../redux/authenticationReducer';
+import { connect } from 'react-redux';
+import { getAuthSelector } from '../redux/selectrors';
 
-const URL = 'http://212.193.48.242:4000';
-
-const Authentication = () => {
+const Auth = (props) => {
+  const { auth, sendPhone } = props;
   const [phone, onChangeText] = React.useState('+7');
+  const [indicator, onIndicator] = React.useState(false);
+  console.log(indicator)
   const enterNumber = num => {
     if(phone.length < 2) {
       onChangeText('+7');
@@ -13,45 +16,28 @@ const Authentication = () => {
       onChangeText(num);
     }
   }
-  const send = () => {
-    //https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs
-    // axios.get('https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs', {
-    //     params: {}
-    // })
-    // .then(function (response) {
-    //     console.log(response);
-    // })
-    // .catch(function (error) {
-    //     console.log(error);
-    // })
-    // .then(function () {
-    //     // always executed
-    // });
-    axios.post(URL + '/api/authentication', {
-      type: 'authentication', phone
-    })
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  const send = phone => {
+    onIndicator(true);
+    sendPhone(phone);
   }
 
-
   return (
-    <SafeAreaView style={styles.container}>
-      <TextInput
-        style={styles.input}
-        onChangeText={enterNumber}
-        value={phone}
-        keyboardType='number-pad'
-        textAlign={'center'}
-      />
-      <Pressable style={styles.button} onPress={send}>
-        <Text style={styles.text}>{'SEND'}</Text>
-      </Pressable>
-    </SafeAreaView>
+    <View>
+        <SafeAreaView style={styles.container}>
+        { (indicator)? <ActivityIndicator size="large" color="#00ff00" /> : '' }
+          <TextInput
+            style={styles.input}
+            onChangeText={enterNumber}
+            value={phone}
+            keyboardType='number-pad'
+            textAlign={'center'}
+          />
+          <Pressable style={styles.button} onPress={send}>
+            <Text style={styles.text}>{'SEND'}</Text>
+          </Pressable>
+        </SafeAreaView>
+      </View>
+    
   );
 };
 
@@ -90,4 +76,17 @@ const styles = StyleSheet.create({
   },
 });
 
+const mapStateToProps = (state) => {
+  return {
+    auth: getAuthSelector(state)
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    sendPhone: (phone) => dispatch(authThunk(phone))
+  };
+};
+
+const Authentication = connect(mapStateToProps, mapDispatchToProps)(Auth);
 export default Authentication;
