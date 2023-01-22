@@ -2,6 +2,8 @@ import * as React from 'react';
 import { View, SafeAreaView, StyleSheet, TextInput,  Pressable, Alert, Text } from 'react-native';
 import axios from "axios";
 
+const URL = 'http://212.193.48.242:4000';
+
 const Authentication = () => {
   const [phone, onChangeText] = React.useState('+7');
   const enterNumber = num => {
@@ -13,27 +15,27 @@ const Authentication = () => {
   }
   const send = () => {
     //https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs
-    axios.get('https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs', {
-        params: {}
-    })
-    .then(function (response) {
-        console.log(response);
-    })
-    .catch(function (error) {
-        console.log(error);
-    })
-    .then(function () {
-        // always executed
-    });
-    // axios.post('http://localhost:3000/api/authenticationr', {
-    //   type: 'authentication', phone
+    // axios.get('https://63c9375b904f040a9658e4e3.mockapi.io/api/get/uesrs', {
+    //     params: {}
     // })
     // .then(function (response) {
-    //   console.log(response);
+    //     console.log(response);
     // })
     // .catch(function (error) {
-    //   console.log(error);
+    //     console.log(error);
+    // })
+    // .then(function () {
+    //     // always executed
     // });
+    axios.post(URL + '/api/authentication', {
+      type: 'authentication', phone
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
 
