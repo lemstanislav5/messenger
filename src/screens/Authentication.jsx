@@ -7,55 +7,56 @@ import { getAuthSelector } from '../redux/selectrors';
 
 const Auth = (props) => {
   const { auth, sendPhoneAuth } = props;
-  const [phone, onChangePhone] = React.useState('+7');
+  const [phone, onChangePhone] = React.useState();
   const [code, onChangeCode] = React.useState('* * * *');
   const [indicator, onIndicator] = React.useState(false);
-  console.log('auth:', auth)
+  console.log('auth1:', auth)
   React.useEffect(() => {
-    console.log('auth:', auth)
+    console.log(phone)
+    console.log('auth2:', auth)
     onIndicator(false);
  }, [auth]);
-  const enterNumber = num => (phone.length < 2) ? onChangePhone('+7') : onChangePhone(num);
+  const enterNumber = num => {
+    console.log('enterNumber');
+    (phone.length < 2) ? onChangePhone('+7') : onChangePhone(num);
+  }
+  const enterCode = () => {
+    console.log('enterCode');
+    let count = code.split('*').length - 1;
+    if(count === 4) code.replaceAt(0, "x")
+    console.log(count);
+  }
   const sendPhone = () => {
-    onIndicator(true);
-    sendPhoneAuth(phone);
+    console.log(phone.length)
+    if(phone.length === 11){
+      onIndicator(true);
+      sendPhoneAuth(phone);
+    } else {
+      Alert.alert('Неправильный номер.', 'Номер телефона должен состоять из 11 цифр.', [
+        {text: 'Исправить', onPress: () => console.log('OK Pressed')},
+      ]);
+    }
   }
 
   return (
     <View>
         <SafeAreaView style={styles.container}>
-        { (indicator)? <ActivityIndicator size="large" color="#00ff00" /> : '' }
-        {
-          auth ?
-            <>
-              <TextInput
-                style={styles.input}
-                onChangeText={onChangeCode}
-                value={code}
-                keyboardType='number-pad'
-                textAlign={'center'}
-              />
-              <Pressable style={styles.button}>
-                <Text style={styles.text}>{'SEND CODE'}</Text>
-              </Pressable>
-            </>
-          :
-            <>
-              <TextInput
-                style={styles.input}
-                onChangeText={enterNumber}
-                value={phone}
-                keyboardType='number-pad'
-                textAlign={'center'}
-              />
-              <Pressable style={styles.button} onPress={sendPhone}>
-                <Text style={styles.text}>{'SEND PHONE'}</Text>
-              </Pressable>
-            </>
-        }
+          { (true)? <ActivityIndicator style={styles.loading} size="large" color="#00ff00" /> : '' }
+          <Text style={styles.text}>{auth ? 'Укажите код из СМС' : 'Укажите номер телефона'}</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={auth ? enterCode : onChangePhone}
+            value={auth ? code : phone}
+            keyboardType='number-pad'
+            textAlign={'center'}
+            placeholder={auth ? '* * * *' : '79990001122' }
+          />
+          <Pressable style={styles.button} onPress={auth ? sendPhone : sendPhone}>
+            <Text style={styles.textButton}>Отправить</Text>
+          </Pressable>
         </SafeAreaView>
       </View>
-    
+
   );
 };
 
@@ -85,12 +86,26 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: 'black',
   },
-  text: {
+  textButton: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
+  },
+  text: {
+    textAlign: 'center',
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'black',
+  },
+  loading: {
+    top: 60,
+    position: 'absolute',
+    marginLeft:'auto',
+    marginRight:'auto',
   },
 });
 
