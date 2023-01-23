@@ -39,32 +39,35 @@ const Auth = (props) => {
   }
 
   return (
-    <View>
-        <SafeAreaView style={styles.container}>
-          { (true)? <ActivityIndicator style={styles.loading} size="large" color="#00ff00" /> : '' }
-          <Text style={styles.text}>{auth ? 'Укажите код из СМС' : 'Укажите номер телефона'}</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={auth ? enterCode : onChangePhone}
-            value={auth ? code : phone}
-            keyboardType='number-pad'
-            textAlign={'center'}
-            placeholder={auth ? '* * * *' : '79990001122' }
-          />
-          <Pressable style={styles.button} onPress={auth ? sendPhone : sendPhone}>
-            <Text style={styles.textButton}>Отправить</Text>
-          </Pressable>
-        </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.view}> 
+        { (true)? <ActivityIndicator style={styles.loading} /> : '' }
       </View>
-
+      <Text style={styles.text}>{auth ? 'Укажите код из СМС' : 'Укажите номер телефона'}</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={auth ? enterCode : onChangePhone}
+        value={auth ? code : phone}
+        keyboardType='number-pad'
+        textAlign={'center'}
+        placeholder={auth ? '* * * *' : '79990001122' }
+      />
+      <Pressable style={styles.button} onPress={auth ? sendPhone : sendPhone}>
+        <Text style={styles.textButton}>Отправить</Text>
+      </Pressable>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
     marginHorizontal: 16,
+    top: 0,
+    backgroundColor: "darkorange",
+    paddingTop: 150
   },
   input: {
     fontSize: 16,
@@ -79,7 +82,6 @@ const styles = StyleSheet.create({
     width: 270,
     margin: 12,
     alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 12,
     paddingHorizontal: 2,
     borderRadius: 4,
@@ -101,12 +103,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
     color: 'black',
   },
-  loading: {
-    top: 60,
-    position: 'absolute',
-    marginLeft:'auto',
-    marginRight:'auto',
+  loading:{
+    size: 'large', 
+    color: '#000'
   },
+  view: {
+    height: 50
+  }
 });
 
 const mapStateToProps = (state) => {
