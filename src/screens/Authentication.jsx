@@ -8,7 +8,7 @@ import { getAuthSelector } from '../redux/selectrors';
 const Auth = (props) => {
   const { auth, sendPhoneAuth } = props;
   const [phone, onChangePhone] = React.useState();
-  const [code, onChangeCode] = React.useState('* * * *');
+  const [code, onChangeCode] = React.useState();
   const [indicator, onIndicator] = React.useState(false);
   console.log('auth1:', auth)
   React.useEffect(() => {
@@ -16,23 +16,16 @@ const Auth = (props) => {
     console.log('auth2:', auth)
     onIndicator(false);
  }, [auth]);
-  const enterNumber = num => {
-    console.log('enterNumber');
-    (phone.length < 2) ? onChangePhone('+7') : onChangePhone(num);
-  }
-  const enterCode = () => {
-    console.log('enterCode');
-    let count = code.split('*').length - 1;
-    if(count === 4) code.replaceAt(0, "x")
-    console.log(count);
+  const sendCode = () => {
+    console.log('enterCode')
   }
   const sendPhone = () => {
     console.log(phone.length)
-    if(phone.length === 11){
+    if(phone.length === 10){
       onIndicator(true);
       sendPhoneAuth(phone);
     } else {
-      Alert.alert('Неправильный номер.', 'Номер телефона должен состоять из 11 цифр.', [
+      Alert.alert('Messenger', 'Номер телефона должен состоять из 11 цифр.', [
         {text: 'Исправить', onPress: () => console.log('OK Pressed')},
       ]);
     }
@@ -40,19 +33,19 @@ const Auth = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.view}> 
-        { (true)? <ActivityIndicator style={styles.loading} /> : '' }
+      <View style={styles.view}>
+        { (indicator)? <ActivityIndicator style={styles.loading} /> : '' }
       </View>
       <Text style={styles.text}>{auth ? 'Укажите код из СМС' : 'Укажите номер телефона'}</Text>
       <TextInput
         style={styles.input}
-        onChangeText={auth ? enterCode : onChangePhone}
+        onChangeText={auth ? onChangeCode : onChangePhone}
         value={auth ? code : phone}
         keyboardType='number-pad'
         textAlign={'center'}
-        placeholder={auth ? '* * * *' : '79990001122' }
+        placeholder={auth ? '* * * *' : '9990001122' }
       />
-      <Pressable style={styles.button} onPress={auth ? sendPhone : sendPhone}>
+      <Pressable style={styles.button} onPress={auth ? sendCode : sendPhone}>
         <Text style={styles.textButton}>Отправить</Text>
       </Pressable>
     </SafeAreaView>
@@ -62,11 +55,13 @@ const Auth = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     justifyContent: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'column',
     marginHorizontal: 16,
     top: 0,
-    backgroundColor: "darkorange",
+    backgroundColor: '#657f17',
     paddingTop: 150
   },
   input: {
@@ -77,6 +72,8 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+    backgroundColor: "#fff",
+    textAlign:"center",
   },
   button: {
     width: 270,
@@ -104,7 +101,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   loading:{
-    size: 'large', 
+    size: 'large',
     color: '#000'
   },
   view: {
